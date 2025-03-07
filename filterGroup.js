@@ -1,6 +1,8 @@
 let isExtensionEnabled = false; // Variable to store the extension state
-let ACTION = 'archive';
-const REGEX = /^https:\/\/plane\.ageno\.work\/[^\/]+\/notifications\/$/;
+const ACTION = 'archive';
+const ARCHIVE_REGEX = /^https:\/\/plane\.ageno\.work\/[^\/]+\/notifications\/$/;
+const COMMENTS_REGEX = /^https:\/\/plane\.ageno\.work\/([^\/]+)\/(notifications|projects\/[^\/]+)\/.*$/;
+
 
 // Function to initialize the extension state
 function initializeExtensionState() {
@@ -21,11 +23,14 @@ function startObserving() {
     const observer = new MutationObserver((mutations) => {
         mutations.forEach((mutation) => {
             if (mutation.addedNodes.length && isExtensionEnabled) {
-                if (REGEX.test(window.location.href)) {
+                if (ARCHIVE_REGEX.test(window.location.href)) {
                     actionButton();
 
                     // Only call filterGroups if the extension is enabled
                     // filterGroups();
+                }
+                if (COMMENTS_REGEX.test(window.location.href)) {
+                    adjustActivityLayout();
                 }
             }
         });
@@ -125,6 +130,21 @@ function filterGroups() {
             }
         }
     });
+}
+
+function adjustActivityLayout() {
+    const commentsWrapperSection = document.querySelector('.relative.h-full.w-full.overflow-hidden .space-y-4.pt-3 .min-h-\\[200px\\] .space-y-3');
+    if (commentsWrapperSection){
+        const isDescOrder = localStorage.getItem('activity_sort_order') === '"desc"';
+
+        const commentInputSection = commentsWrapperSection.querySelector('.sticky.z-\\[4\\].bg-custom-background-100.sm\\:static');
+
+        if (commentInputSection) {
+            commentsWrapperSection.classList.toggle('flex', isDescOrder);
+            commentsWrapperSection.classList.toggle('flex-col-reverse', isDescOrder);
+            commentInputSection.style.marginBottom = isDescOrder ? '32px' : 'initial';
+        }
+    };
 }
 
 // Initialize the extension state on script load
