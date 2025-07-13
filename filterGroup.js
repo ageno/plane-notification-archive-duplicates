@@ -1,6 +1,9 @@
 let isExtensionEnabled = false; // Variable to store the extension state
 const ACTION = 'archive';
+const DOMAIN_REGEX = /^https:\/\/plane\.ageno\.work\/?/;
+// Deprecated
 const ARCHIVE_REGEX = /^https:\/\/plane\.ageno\.work\/[^\/]+\/notifications\/$/;
+// Deprecated
 const COMMENTS_REGEX = /^https:\/\/plane\.ageno\.work\/([^\/]+)\/(notifications|projects\/[^\/]+)\/.*$/;
 
 
@@ -23,13 +26,12 @@ function startObserving() {
     const observer = new MutationObserver((mutations) => {
         mutations.forEach((mutation) => {
             if (mutation.addedNodes.length && isExtensionEnabled) {
-                if (ARCHIVE_REGEX.test(window.location.href)) {
+                if (DOMAIN_REGEX.test(window.location.href)) {
                     actionButton();
 
                     // Only call filterGroups if the extension is enabled
                     // filterGroups();
-                }
-                if (COMMENTS_REGEX.test(window.location.href)) {
+                    
                     adjustActivityLayout();
                 }
             }
