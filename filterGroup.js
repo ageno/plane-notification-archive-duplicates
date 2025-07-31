@@ -1,10 +1,12 @@
+let generateTaskDescription;
+
+(async () => {
+    generateTaskDescription = (await import(chrome.runtime.getURL('features/generateTaskDescription.js'))).generateTaskDescription;
+})();
+
 let isExtensionEnabled = false; // Variable to store the extension state
 const ACTION = 'archive';
 const DOMAIN_REGEX = /^https:\/\/plane\.ageno\.work\/?/;
-// Deprecated
-const ARCHIVE_REGEX = /^https:\/\/plane\.ageno\.work\/[^\/]+\/notifications\/$/;
-// Deprecated
-const COMMENTS_REGEX = /^https:\/\/plane\.ageno\.work\/([^\/]+)\/(notifications|projects\/[^\/]+)\/.*$/;
 
 
 // Function to initialize the extension state
@@ -29,9 +31,13 @@ function startObserving() {
                 if (DOMAIN_REGEX.test(window.location.href)) {
                     actionButton();
 
+                    if (typeof generateTaskDescription === 'function') {
+                        generateTaskDescription();
+                    }
+
                     // Only call filterGroups if the extension is enabled
                     // filterGroups();
-                    
+
                     adjustActivityLayout();
                 }
             }
