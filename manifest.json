@@ -1,19 +1,27 @@
 {
   "manifest_version": 3,
   "name": "Plane Notification - Archive Duplicates",
-  "version": "2.3",
+  "version": "2.4",
   "permissions": [
     "activeTab",
     "contextMenus",
-    "storage" // Permission to use local storage
+    "storage"
   ],
   "background": {
-    "service_worker": "background.js" // Background script
+    "service_worker": "background.js",
+    "type": "module"
   },
   "content_scripts": [
     {
-      "matches": ["https://plane.ageno.work/*/"],
-      "js": ["filterGroup.js", "workspacesNotificationCounter.js"]
+      "matches": ["https://plane.ageno.work/*"],
+      "js": ["filterGroup.js", "features/workspacesNotificationCounter.js"],
+      "type": "module"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["template.html","features/generateTaskDescription.js"],
+      "matches": ["https://plane.ageno.work/*"]
     }
   ]
 }
